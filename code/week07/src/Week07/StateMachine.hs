@@ -24,17 +24,18 @@ import           Control.Monad                hiding (fmap)
 import           Data.Aeson                   (FromJSON, ToJSON)
 import           Data.Text                    (Text, pack)
 import           GHC.Generics                 (Generic)
-import           Plutus.Contract              as Contract hiding (when)
-import           Plutus.Contract.StateMachine
-import qualified PlutusTx
-import           PlutusTx.Prelude             hiding (Semigroup(..), check, unless)
 import           Ledger                       hiding (singleton)
 import           Ledger.Ada                   as Ada
 import           Ledger.Constraints           as Constraints
-import           Ledger.Typed.Tx
 import qualified Ledger.Typed.Scripts         as Scripts
+import           Ledger.Typed.Tx
 import           Ledger.Value
 import           Playground.Contract          (ToSchema)
+import           Plutus.Contract              as Contract hiding (when)
+import           Plutus.Contract.StateMachine
+import qualified PlutusTx
+import           PlutusTx.Prelude             hiding (Semigroup (..), check,
+                                               unless)
 import           Prelude                      (Semigroup (..))
 import qualified Prelude
 
@@ -201,12 +202,11 @@ firstGame fp = do
         bs     = sha2_256 $ fpNonce fp `concatenate` if c == Zero then bsZero else bsOne
     void $ mapError' $ runInitialise client (GameDatum bs Nothing) v
     logInfo @String $ "made first move: " ++ show (fpChoice fp)
-
     void $ awaitSlot $ 1 + fpPlayDeadline fp
 
     m <- mapError' $ getOnChainState client
     case m of
-        Nothing             -> throwError "game output not found"
+        Nothing          -> throwError "game output not found"
         Just ((o, _), _) -> case tyTxOutData o of
 
             GameDatum _ Nothing -> do
