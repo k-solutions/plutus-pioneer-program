@@ -81,13 +81,6 @@ PlutusTx.unstableMakeIsData ''GameRedeemer
 lovelaces :: Value -> Integer
 lovelaces = Ada.getLovelace . Ada.fromValue
 
-{-# INLINABLE gameDatum #-}
-gameDatum :: TxOut -> (DatumHash -> Maybe Datum) -> Maybe GameDatum
-gameDatum o f = do
-    dh      <- txOutDatum o
-    Datum d <- f dh
-    PlutusTx.fromData d
-
 {-# INLINABLE transition #-}
 transition :: Game -> State GameDatum -> GameRedeemer -> Maybe (TxConstraints Void Void, State GameDatum)
 transition game s r = case (stateValue s, stateData s, r) of
@@ -188,7 +181,7 @@ mapError' = mapError $ pack . show
 firstGame :: forall w s. HasBlockchainActions s => FirstParams -> Contract w s Text ()
 firstGame fp = do
     pkh <- pubKeyHash <$> Contract.ownPubKey
-    let game   = Game
+    let game = Game
             { gFirst          = pkh
             , gSecond         = fpSecond fp
             , gStake          = fpStake fp
@@ -210,7 +203,6 @@ firstGame fp = do
         Just ((o, _), _) -> case tyTxOutData o of
 
             GameDatum _ Nothing -> do
-                logInfo @String "second player did not play"
                 void $ mapError' $ runStep client ClaimFirst
                 logInfo @String "first player reclaimed stake"
 

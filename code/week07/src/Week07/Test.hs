@@ -19,8 +19,8 @@ import           Control.Monad.Freer.Extras as Extras
 import           Data.Default               (Default (..))
 import qualified Data.Map                   as Map
 import           Ledger
-import           Ledger.Value
 import           Ledger.Ada                 as Ada
+import           Ledger.Value
 import           Plutus.Trace.Emulator      as Emulator
 import           PlutusTx.Prelude
 import           Wallet.Emulator.Wallet

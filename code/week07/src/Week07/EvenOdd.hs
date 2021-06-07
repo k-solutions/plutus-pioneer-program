@@ -25,15 +25,15 @@ import           Data.Aeson           (FromJSON, ToJSON)
 import qualified Data.Map             as Map
 import           Data.Text            (Text)
 import           GHC.Generics         (Generic)
-import           Plutus.Contract      as Contract hiding (when)
-import qualified PlutusTx
-import           PlutusTx.Prelude     hiding (Semigroup(..), unless)
 import           Ledger               hiding (singleton)
+import           Ledger.Ada           as Ada
 import           Ledger.Constraints   as Constraints
 import qualified Ledger.Typed.Scripts as Scripts
-import           Ledger.Ada           as Ada
 import           Ledger.Value
 import           Playground.Contract  (ToSchema)
+import           Plutus.Contract      as Contract hiding (when)
+import qualified PlutusTx
+import           PlutusTx.Prelude     hiding (Semigroup (..), unless)
 import           Prelude              (Semigroup (..))
 import qualified Prelude
 
@@ -68,7 +68,10 @@ instance Eq GameDatum where
 
 PlutusTx.unstableMakeIsData ''GameDatum
 
-data GameRedeemer = Play GameChoice | Reveal ByteString | ClaimFirst | ClaimSecond
+data GameRedeemer = Play GameChoice
+                  | Reveal ByteString
+                  | ClaimFirst
+                  | ClaimSecond
     deriving Show
 
 PlutusTx.unstableMakeIsData ''GameRedeemer
