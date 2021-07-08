@@ -28,17 +28,19 @@ import           Data.Aeson                   (FromJSON, ToJSON)
 import           Data.Monoid                  (Last (..))
 import           Data.Text                    (Text, pack)
 import           GHC.Generics                 (Generic)
-import           Plutus.Contract              as Contract hiding (when)
-import           Plutus.Contract.StateMachine
-import qualified Plutus.Contracts.Currency    as C
-import qualified PlutusTx
-import           PlutusTx.Prelude             hiding (Semigroup(..), check, unless)
 import           Ledger                       hiding (singleton)
 import           Ledger.Ada                   as Ada
 import           Ledger.Constraints           as Constraints
 import qualified Ledger.Typed.Scripts         as Scripts
 import           Ledger.Value
-import           Prelude                      (Semigroup (..), Show (..), uncurry)
+import           Plutus.Contract              as Contract hiding (when)
+import           Plutus.Contract.StateMachine
+import qualified Plutus.Contracts.Currency    as C
+import qualified PlutusTx
+import           PlutusTx.Prelude             hiding (Semigroup (..), check,
+                                               unless)
+import           Prelude                      (Semigroup (..), Show (..),
+                                               uncurry)
 import qualified Prelude
 
 data TokenSale = TokenSale
@@ -92,8 +94,7 @@ transition ts s r = case (stateValue s, stateData s, r) of
                                                            lovelaceValueOf (negate l)
                                                          )
     (_, Just _, Close)                           -> Just ( Constraints.mustBeSignedBy (tsSeller ts)
-                                                         , State Nothing $
-                                                           mempty
+                                                         , State Nothing mempty
                                                          )
     _                                            -> Nothing
   where
