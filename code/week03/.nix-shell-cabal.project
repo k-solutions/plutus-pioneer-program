@@ -1,0 +1,80 @@
+-- Generated from /home/me/crypto/plutus-pioneer-program/code/week03/cabal.project by the wrapper script
+-- /nix/store/xc7dw8ljls40pzrfxkqvnxvmfk7m9kxw-cabal
+-- Add this file to your .gitignore
+
+-- Bump this if you need newer packages.
+index-state: 2021-10-20T00:00:00Z
+
+packages: plutus-pioneer-program-week03.cabal
+
+-- We never, ever, want this.
+write-ghc-environment-files: never
+
+-- Always build tests and benchmarks.
+tests: true
+benchmarks: true
+
+-- The only sensible test display option.
+test-show-details: streaming
+
+allow-newer:
+  size-based:template-haskell
+
+constraints:
+  -- Newer Hashable have instances for Set, which breaks beam-migrate
+  -- which declares its own instances of Hashable Set
+  hashable < 1.3.4.0
+
+-- These packages appear in our dependency tree and are very slow to build.
+-- Empirically, turning off optimization shaves off ~50% build time.
+-- It also mildly improves recompilation avoidance.
+-- For deve work we don't care about performance so much, so this is okay.
+package cardano-ledger-alonzo
+  optimization: False
+package ouroboros-consensus-shelley
+  optimization: False
+package ouroboros-consensus-cardano
+  optimization: False
+package cardano-api
+  optimization: False
+package cardano-wallet
+  optimization: False
+package cardano-wallet-core
+  optimization: False
+package cardano-wallet-cli
+  optimization: False
+package cardano-wallet-launcher
+  optimization: False
+package cardano-wallet-core-integration
+  optimization: False
+
+-- Direct dependency.
+-- Are you thinking of updating this tag to some other commit?
+-- Please ensure that the commit you are about to use is the latest one from
+-- the *develop* branch of this repo:
+--   * <https://github.com/input-output-hk/iohk-monitoring-framework/commits/develop>
+-- (not master!)
+--
+-- In particular we rely on the code from this PR:
+--  * <https://github.com/input-output-hk/iohk-monitoring-framework/pull/622>
+-- being merged.
+-- Direct dependency.
+-- Should follow plutus.
+-- Direct dependency.
+-- Direct dependency.
+-- Direct dependency.
+-- Compared to others, cardano-wallet doesn't bump dependencies very often.
+-- Making it a good place to start when bumping dependencies.
+-- As, for example, bumping the node first highly risks breaking API with the wallet.
+-- Unless early bug fixes are required, this is fine as the wallet tracks stable releases of the node.
+-- And it is indeed nice for plutus-apps to track stable releases of the node too.
+-- Should follow cardano-wallet.
+-- Currently tracking v1.33.0.
+-- Should follow cardano-wallet.
+-- Should follow cardano-wallet.
+-- Should follow cardano-wallet.
+-- Should follow cardano-wallet.
+-- Should follow cardano-wallet.
+-- Should follow cardano-wallet.
+-- Should follow cardano-wallet.
+-- Should follow cardano-wallet.
