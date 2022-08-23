@@ -20,6 +20,8 @@ import           Plutus.Contract.Test  (Wallet (Wallet), knownWallet,
                                         mockWalletPaymentPubKeyHash)
 import           Plutus.Trace.Emulator as Emulator
 
+--- OFFLINE Code ---
+
 data PayParams = PayParams
     { ppRecipient :: PaymentPubKeyHash
     , ppLovelace  :: Integer
@@ -40,20 +42,21 @@ errHandler = Contract.logInfo . ("Caught error: " <>)
 -- A trace that invokes the pay endpoint of payContract on Wallet 1 twice, each time with Wallet 2 as
 -- recipient, but with amounts given by the two arguments. There should be a delay of one slot
 -- after each endpoint call.
-payTrace :: Integer -> Integer -> EmulatorTrace ()
-payTrace  amount1 amount2 = do
+payTrace :: Integer -> EmulatorTrace ()
+payTrace  amount = do
   h <- activateContractWallet (knownWallet 1) payContract
   let wallet2PubKeyHash = mockWalletPaymentPubKeyHash . knownWallet $ 2
       payParams :: Integer -> PayParams
       payParams = PayParams wallet2PubKeyHash
-  callEndpoint @"pay" h . payParams $ amount1
+  callEndpoint @"pay" h . payParams $ amount
   void . Emulator.waitNSlots $ 1
-  callEndpoint @ "pay" h . payParams $ amount2
+
+  -- callEndpoint @ "pay" h . payParams $ amount2
 
 --- TESTS ---
 
 payTest1 :: IO ()
-payTest1 = runEmulatorTraceIO $ payTrace 10_000_000 20_000_000
+payTest1 = runEmulatorTraceIO $ payTrace 10_000_000
 
 payTest2 :: IO ()
-payTest2 = runEmulatorTraceIO $ payTrace 1000_000_000 20_000_000
+payTest2 = runEmulatorTraceIO $ payTrace 1000_000_000
