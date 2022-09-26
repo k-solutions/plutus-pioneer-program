@@ -14,28 +14,28 @@ module Week06.Token.OffChain
     , mintToken
     ) where
 
-import           Control.Monad               hiding (fmap)
-import           Data.Aeson                  (FromJSON, ToJSON)
-import qualified Data.Map                    as Map
-import           Data.Maybe                  (fromJust)
-import           Data.OpenApi.Schema         (ToSchema)
-import           Data.Text                   (Text, pack)
-import           Data.Void                   (Void)
-import           GHC.Generics                (Generic)
-import           Plutus.Contract             as Contract
-import           Plutus.Contract.Wallet      (getUnspentOutput)
+import           Control.Monad          hiding (fmap)
+import           Data.Aeson             (FromJSON, ToJSON)
+import qualified Data.Map               as Map
+import           Data.Maybe             (fromJust)
+import           Data.OpenApi.Schema    (ToSchema)
+import           Data.Text              (Text, pack)
+import           Data.Void              (Void)
+import           GHC.Generics           (Generic)
+import           Ledger                 hiding (mint, singleton)
+import           Ledger.Constraints     as Constraints
+import qualified Ledger.Typed.Scripts   as Scripts
+import           Ledger.Value           as Value
+import           Plutus.Contract        as Contract
+import           Plutus.Contract.Wallet (getUnspentOutput)
 import qualified PlutusTx
-import           PlutusTx.Prelude            hiding (Semigroup(..), unless)
-import           Ledger                      hiding (mint, singleton)
-import           Ledger.Constraints          as Constraints
-import qualified Ledger.Typed.Scripts        as Scripts
-import           Ledger.Value                as Value
-import           Prelude                     (Semigroup (..), Show (..), String)
+import           PlutusTx.Prelude       hiding (Semigroup (..), unless)
+import           Prelude                (Semigroup (..), Show (..), String)
 import qualified Prelude
-import           Text.Printf                 (printf)
+import           Text.Printf            (printf)
 
 import           Week06.Token.OnChain
-import           Week06.Utils                (getCredentials)
+import           Week06.Utils           (getCredentials)
 
 data TokenParams = TokenParams
     { tpToken   :: !TokenName
@@ -83,12 +83,12 @@ mintToken tp = do
 
             let tn          = tpToken tp
                 amt         = tpAmount tp
-                cs          = tokenCurSymbol oref tn amt
+                cs          = tokenCurSymbol . MintParams oref tn . Amount $ amt
                 val         = Value.singleton cs tn amt
                 c           = case my of
                     Nothing -> Constraints.mustPayToPubKey x val
                     Just y  -> Constraints.mustPayToPubKeyAddress x y val
-                lookups     = Constraints.mintingPolicy (tokenPolicy oref tn amt) <>
+                lookups     = Constraints.mintingPolicy (tokenPolicy . MintParams oref tn . Amount $ amt) <>
                               Constraints.unspentOutputs (Map.singleton oref o)
                 constraints = Constraints.mustMintValue val          <>
                               Constraints.mustSpendPubKeyOutput oref <>
