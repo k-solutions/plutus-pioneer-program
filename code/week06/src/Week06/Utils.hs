@@ -28,6 +28,7 @@ import qualified Data.ByteString.Short       as SBS
 import           Data.Maybe                  (fromJust, fromMaybe)
 import           Data.String                 (IsString (..))
 import           Data.Text                   (pack)
+import qualified Ledger                      as Plutus
 import           Plutus.PAB.Webserver.Types  (ContractActivationArgs (..))
 import           Plutus.V1.Ledger.Credential as Plutus
 import           Plutus.V1.Ledger.Crypto     as Plutus
@@ -36,8 +37,7 @@ import           PlutusTx                    (Data (..))
 import qualified PlutusTx
 import           PlutusTx.Builtins           (toBuiltin)
 import           PlutusTx.Builtins.Internal  (BuiltinByteString (..))
-import qualified Ledger                      as Plutus
-import           Wallet.Emulator.Wallet      (WalletId (..), Wallet (..))
+import           Wallet.Emulator.Wallet      (Wallet (..), WalletId (..))
 import           Wallet.Types                (ContractInstanceId (..))
 
 dataToScriptData :: Data -> ScriptData
@@ -124,7 +124,12 @@ cidToString :: ContractInstanceId -> String
 cidToString = show . unContractInstanceId
 
 writeMintingPolicy :: FilePath -> Plutus.MintingPolicy -> IO (Either (FileError ()) ())
-writeMintingPolicy file = writeFileTextEnvelope @(PlutusScript PlutusScriptV1) file Nothing . PlutusScriptSerialised . SBS.toShort . LBS.toStrict . serialise . Plutus.getMintingPolicy
+writeMintingPolicy file = writeFileTextEnvelope @(PlutusScript PlutusScriptV1) file Nothing
+                        . PlutusScriptSerialised
+                        . SBS.toShort
+                        . LBS.toStrict
+                        . serialise
+                        . Plutus.getMintingPolicy
 
 unsafeTokenNameToHex :: TokenName -> String
 unsafeTokenNameToHex = BS8.unpack . serialiseToRawBytesHex . fromJust . deserialiseFromRawBytes AsAssetName . getByteString . unTokenName

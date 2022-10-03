@@ -5,17 +5,17 @@ module Main
 import           Control.Exception    (throwIO)
 import           Data.String          (IsString (..))
 import           System.Environment   (getArgs)
-import           Week06.Token.OnChain (Amount (..), MintParams (..),
-                                       tokenPolicy)
+import           Week06.Token.OnChain (MintParams (..), tokenPolicy)
 import           Week06.Utils         (unsafeReadTxOutRef, writeMintingPolicy)
 
 main :: IO ()
 main = do
-    [file, oref', amt', tn'] <- getArgs
+    [file, oref', tn'] <- getArgs
     let oref = unsafeReadTxOutRef oref'
-        amt  = read amt'
         tn   = fromString tn'
-        p    = tokenPolicy . MintParams oref tn . Amount $ amt
+        p    = tokenPolicy
+             . MintParams oref
+             $ tn
     e <- writeMintingPolicy file p
     case e of
         Left err -> throwIO $ userError $ show err

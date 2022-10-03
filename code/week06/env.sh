@@ -1,6 +1,6 @@
 #!/bin/bash
 
 export CARDANO_NODE_SOCKET_PATH=testnet/node.sock
-export MAGIC='--testnet-magic 1097911063'
-export ADDRESS=addr_test1qzj356wpdmhdchvmc355xx6wel7cqvepyrlam84aygkvx9d04w7v8cu4fshxvv5ukfw05nyzh07zy427mf2eqkcd27aqax2r7e
-export WALLETID=7cc75497535877261173ab585f5abb431f7ba484
+export MAGIC='--testnet-magic 2'
+export ADDRESS=addr_test1qqgdyc63lwknfm9f6vfrrxmrevkt72s39kesr6wguvamssm7k5jcq6re9svjxdekx0dky7qxhpwacpfep2galujczznsmx73vd
+export WALLETID=96fa86a415c9374ca48c34975f246f30a0131f4c

@@ -39,7 +39,6 @@ import           Week06.Utils           (getCredentials)
 
 data TokenParams = TokenParams
     { tpToken   :: !TokenName
-    , tpAmount  :: !Integer
     , tpAddress :: !Address
     } deriving (Prelude.Eq, Prelude.Ord, Generic, FromJSON, ToJSON, ToSchema, Show)
 
@@ -82,14 +81,13 @@ mintToken tp = do
             Contract.logDebug @String $ printf "picked UTxO at %s with value %s" (show oref) (show $ _ciTxOutValue o)
 
             let tn          = tpToken tp
-                amt         = tpAmount tp
-                cs          = tokenCurSymbol . MintParams oref tn . Amount $ amt
-                val         = Value.singleton cs tn amt
+                cs          = tokenCurSymbol. MintParams oref $ tn
+                val         = Value.singleton cs tn 1
                 c           = case my of
                     Nothing -> Constraints.mustPayToPubKey x val
                     Just y  -> Constraints.mustPayToPubKeyAddress x y val
-                lookups     = Constraints.mintingPolicy (tokenPolicy . MintParams oref tn . Amount $ amt) <>
-                              Constraints.unspentOutputs (Map.singleton oref o)
+                lookups     =  Constraints.mintingPolicy (tokenPolicy . MintParams oref $ tn)
+                            <> Constraints.unspentOutputs (Map.singleton oref o)
                 constraints = Constraints.mustMintValue val          <>
                               Constraints.mustSpendPubKeyOutput oref <>
                               c
